@@ -1,0 +1,228 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Configure (internal)",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--preset",
+                "debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "hide": true
+        },
+        {
+            "label": "GCC: 编译 (Debug)",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "debug"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "日常增量编译，不下载；Ctrl+Shift+B 默认执行。",
+            "dependsOn": "CMake: Configure (internal)",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "GCC: 清理后重新编译",
+            "type": "process",
+            "command": "cmake",
+            "args": [
+                "--build",
+                "--preset",
+                "debug",
+                "--clean-first"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "清理旧 GCC 构建产物后全量编译，不删除源码、不下载。",
+            "dependsOn": "CMake: Configure (internal)",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "GCC: 编译并下载 (ST-Link)",
+            "type": "process",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\.vscode\\flash_stlink.ps1",
+                "-BuildSystem",
+                "GCC"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "detail": "先 GCC 编译，成功后下载 build/atk_f429_FreeRTOS.hex，校验并复位。",
+            "dependsOn": "GCC: 编译 (Debug)",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            }
+        },
+        {
+            "label": "STM32: 串口监视 (GBK / 115200)",
+            "type": "process",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\.vscode\\serial_monitor_gbk.ps1",
+                "-Port",
+                "${input:comPort}",
+                "-Baud",
+                "115200"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "detail": "两套编译方案共用；输入实际 COM 号，终止任务以释放串口。",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated",
+                "clear": true
+            }
+        },
+        {
+            "label": "Keil 备用: 编译",
+            "type": "process",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\.vscode\\build_keil.ps1"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": {
+                "owner": "c",
+                "fileLocation": [
+                    "absolute"
+                ],
+                "pattern": {
+                    "regexp": "^(.+)\\((\\d+)\\):\\s*(error|warning):\\s*(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            },
+            "detail": "调用 Keil 编译 .uvprojx 工程，不下载。",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Keil 备用: 重新编译",
+            "type": "process",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\.vscode\\build_keil.ps1",
+                "-Rebuild"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": {
+                "owner": "c",
+                "fileLocation": [
+                    "absolute"
+                ],
+                "pattern": {
+                    "regexp": "^(.+)\\((\\d+)\\):\\s*(error|warning):\\s*(.*)$",
+                    "file": 1,
+                    "line": 2,
+                    "severity": 3,
+                    "message": 4
+                }
+            },
+            "detail": "调用 Keil 全量重编译，不下载。",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            }
+        },
+        {
+            "label": "Keil 备用: 编译并下载 (ST-Link)",
+            "type": "process",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                "${workspaceFolder}\\.vscode\\flash_stlink.ps1",
+                "-BuildSystem",
+                "Keil"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "detail": "先 Keil 编译，成功后下载 Output/atk_f429.hex，不使用 GCC 产物。",
+            "dependsOn": "Keil 备用: 编译",
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false
+            }
+        }
+    ],
+    "inputs": [
+        {
+            "id": "comPort",
+            "type": "promptString",
+            "description": "输入开发板 USB 串口的 COM 号（在 Windows 设备管理器中确认）"
+        }
+    ]
+}

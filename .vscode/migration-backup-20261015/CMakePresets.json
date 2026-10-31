@@ -1,0 +1,27 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug (arm-none-eabi-gcc)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "toolchainFile": "${sourceDir}/toolchain-arm-none-eabi.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "configurePreset": "debug",
+            "jobs": 12
+        }
+    ]
+}

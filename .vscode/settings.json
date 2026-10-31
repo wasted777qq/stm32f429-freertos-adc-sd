@@ -1,0 +1,23 @@
+{
+    "files.encoding": "gbk",
+    "files.autoGuessEncoding": true,
+    "stm32cube-ide-clangd.enable": true,
+    "stm32cube-ide-clangd.arguments": [
+        "--query-driver=D:/STUDY/Cube CLT/STM32CubeCLT_1.18.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe"
+    ],
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.intelliSenseEngineFallback": "enabled",
+    "C_Cpp.errorSquiggles": "enabled",
+    "C_Cpp.intelliSenseCachePath": "${workspaceFolder}/build/.vscode-ipch",
+    "serial-monitor.defaultBaud": "115200",
+    "cmake.useCMakePresets": "always",
+    "cmake.configureOnOpen": true,
+    "files.exclude": {
+        "**/.vscode/migration-backup-*": true
+    },
+    "search.exclude": {
+        "**/build/**": true,
+        "**/Output/**": true,
+        "**/.vscode/migration-backup-*/**": true
+    }
+}
